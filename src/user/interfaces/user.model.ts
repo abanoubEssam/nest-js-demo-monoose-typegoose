@@ -1,30 +1,22 @@
-import { Prop, SchemaFactory, Schema } from '@nestjs/mongoose';
+import { prop, plugin } from "@typegoose/typegoose";
+import { AutoIncrementID } from "@typegoose/auto-increment";
 import * as mongooseI18n from 'mongoose-i18n-localize';
-import { autoIncrement } from 'mongoose-plugin-autoinc-fix';
-import { Document } from 'mongoose';
 
-@Schema()
-export class User extends Document {
-    @Prop()
-    _id: number;
 
-    @Prop({ required: true, i18n: true})
-    name: string;
+@plugin(AutoIncrementID, { startAt: 1, field: "_id", incrementBy: 1 })
+@plugin(mongooseI18n, { locales: ['en', 'ar'] })
+export class User {
+    @prop()
+    public _id: number;
 
-    @Prop({required: true})
-    email: string;
+    @prop({ i18n: true })
+    public name: string;
 
-    @Prop()
-    password: string;
+    @prop()
+    public email: string;
+
+    @prop()
+    public password: string;
 
 }
 
-export const UserSchema = SchemaFactory.createForClass(User)
-
-UserSchema.plugin(autoIncrement, {
-    model: User.name,
-    field: '_id',
-    startAt: 1,
-});
-
-UserSchema.plugin(mongooseI18n, { locales: ['en', 'ar'] });
